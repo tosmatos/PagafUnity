@@ -190,6 +190,7 @@ public class Bird : MonoBehaviour
             Debug.Log($"Bird forces - Sep: {separationForce.magnitude:F2}, " +
                      $"Align: {alignmentForce.magnitude:F2}, " +
                      $"Cohesion: {cohesionForce.magnitude:F2}, " +
+                     $"Goal: {goalForce.magnitude:F2}, " +
                      $"Speed: {Velocity.magnitude:F2}");
         }
         
