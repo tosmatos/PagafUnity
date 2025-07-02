@@ -37,6 +37,8 @@ public class Bird : MonoBehaviour
     
     private FlockManager flockManager;
     
+    private Animator animator;
+    
     void Start()
     {
         // Initialize with random velocity
@@ -45,6 +47,7 @@ public class Bird : MonoBehaviour
         Velocity = (baseDirection + randomOffset).normalized * Random.Range(8.0f, 12.0f);
         
         flockManager = FindObjectOfType<FlockManager>();
+        animator = GetComponent<Animator>();
     }
     
     void Update()
@@ -147,7 +150,6 @@ public class Bird : MonoBehaviour
     
     public Vector3 CalculateGoalForce()
     {
-        // Fixed: Now uses the actual goal position from FlockManager
         Vector3 targetPosition = flockManager != null ? flockManager.GoalPosition : Vector3.up * 20f;
         Vector3 desiredDirection = targetPosition - transform.position;
         float distance = desiredDirection.magnitude;
@@ -224,11 +226,12 @@ public class Bird : MonoBehaviour
     private void UpdateAnimation()
     {
         // Simple flapping based on speed
-        float speedRatio = Velocity.magnitude / maxSpeed;
-        isFlapping = speedRatio > 0.3f;
-        
-        // You can add actual animation logic here
-        // For example: animator.SetBool("IsFlapping", isFlapping);
+        if (Velocity.y > 2.0f)
+            isFlapping = true;
+        else isFlapping = false;
+
+        if (animator != null)
+            animator.SetBool("isFlapping", isFlapping);
     }
     
     public void SetVelocity(Vector3 newVelocity)
