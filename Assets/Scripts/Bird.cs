@@ -18,7 +18,7 @@ public class Bird : MonoBehaviour
     [Header("Boid Weights")]
     [SerializeField] private float separationWeight = 4.0f;
     [SerializeField] private float alignmentWeight = 2.0f;
-    [SerializeField] private float cohesionWeight = 1.5f;
+    [SerializeField] private float cohesionWeight = 3.0f;
     [SerializeField] private float goalWeight = 8.0f;
     
     [Header("Animation")]

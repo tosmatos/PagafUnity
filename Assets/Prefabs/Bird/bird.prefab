@@ -266,7 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe03457c7bc5a274495f0a9af058b105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  separationRadius: 10
+  separationRadius: 5
   alignmentRadius: 20
   cohesionRadius: 200
   maxSeparationForce: 50
@@ -276,7 +276,7 @@ MonoBehaviour:
   minSpeed: 15
   separationWeight: 4
   alignmentWeight: 2
-  cohesionWeight: 1.5
+  cohesionWeight: 3
   goalWeight: 8
   isFlapping: 0
 --- !u!95 &8591665140300777352

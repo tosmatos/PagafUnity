@@ -18,7 +18,7 @@ public class FlockManager : MonoBehaviour
     [SerializeField] private float goalMoveRadius = 20.0f;
     
     // Active birds in the flock
-    private List<Bird> allBirds = new List<Bird>();
+    public List<Bird> allBirds = new List<Bird>();
     private float goalAngle = 0f;
     
     void Start()
