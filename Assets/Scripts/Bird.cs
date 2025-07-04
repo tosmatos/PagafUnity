@@ -3,24 +3,23 @@ using UnityEngine;
 public class Bird : MonoBehaviour
 {
     [Header("Boid Settings")]
-    [SerializeField] private float separationRadius = 3.0f;
-    [SerializeField] private float alignmentRadius = 8.0f;
-    [SerializeField] private float cohesionRadius = 15.0f;
+    [SerializeField] private float separationRadius = 5.0f;
+    [SerializeField] private float alignmentRadius = 20.0f;
+    [SerializeField] private float cohesionRadius = 200.0f;
     
     [SerializeField] private float maxSeparationForce = 50.0f;
     [SerializeField] private float maxAlignmentForce = 30.0f;
     [SerializeField] private float maxCohesionForce = 20.0f;
     
     [Header("Flight Settings")]
-    [SerializeField] private float maxSpeed = 15.0f;  // Scaled down from UE4 units
-    [SerializeField] private float minSpeed = 5.0f;
+    [SerializeField] private float maxSpeed = 40.0f; 
+    [SerializeField] private float minSpeed = 15.0f;
     
     [Header("Boid Weights")]
-    [SerializeField] private float separationWeight = 3.0f;
+    [SerializeField] private float separationWeight = 4.0f;
     [SerializeField] private float alignmentWeight = 2.0f;
     [SerializeField] private float cohesionWeight = 1.5f;
-    [SerializeField] private float goalWeight = 0.5f;
-    [SerializeField] private float avoidanceWeight = 3.0f;
+    [SerializeField] private float goalWeight = 8.0f;
     
     [Header("Animation")]
     [SerializeField] private bool isFlapping = false;
@@ -46,7 +45,7 @@ public class Bird : MonoBehaviour
         Vector3 randomOffset = Random.insideUnitSphere * 0.3f;
         Velocity = (baseDirection + randomOffset).normalized * Random.Range(8.0f, 12.0f);
         
-        flockManager = FindObjectOfType<FlockManager>();
+        flockManager = FindAnyObjectByType<FlockManager>();
         animator = GetComponent<Animator>();
     }
     
@@ -150,6 +149,7 @@ public class Bird : MonoBehaviour
     
     public Vector3 CalculateGoalForce()
     {
+        // Fixed: Now uses the actual goal position from FlockManager
         Vector3 targetPosition = flockManager != null ? flockManager.GoalPosition : Vector3.up * 20f;
         Vector3 desiredDirection = targetPosition - transform.position;
         float distance = desiredDirection.magnitude;
@@ -180,9 +180,10 @@ public class Bird : MonoBehaviour
     
     public void UpdateMovement(float deltaTime)
     {
-        // Apply force to velocity (F = ma, assume mass = 1)
-        Vector3 targetVelocity = Velocity + totalForce * deltaTime;
-        Velocity = Vector3.Lerp(Velocity, targetVelocity, deltaTime * 3.0f);
+        // Scale forces to prevent velocity explosion
+        Vector3 acceleration = totalForce * 0.1f; // Much gentler force application
+        Vector3 targetVelocity = Velocity + acceleration * deltaTime;
+        Velocity = Vector3.Lerp(Velocity, targetVelocity, deltaTime * 5.0f);
         
         // DEBUG: Print force magnitudes occasionally
         if (Random.Range(0.0f, 1.0f) < 0.01f) // 1% of frames
@@ -191,12 +192,13 @@ public class Bird : MonoBehaviour
                      $"Align: {alignmentForce.magnitude:F2}, " +
                      $"Cohesion: {cohesionForce.magnitude:F2}, " +
                      $"Goal: {goalForce.magnitude:F2}, " +
+                     $"Total: {totalForce.magnitude:F2}, " +
                      $"Speed: {Velocity.magnitude:F2}");
         }
         
         // Clamp speed to reasonable bird flight range
         float speed = Velocity.magnitude;
-        if (speed > 0.1f) // Only clamp if velocity has meaningful direction
+        if (speed > 0.1f)
         {
             if (speed > maxSpeed)
             {
@@ -209,24 +211,23 @@ public class Bird : MonoBehaviour
         }
         else
         {
-            // If velocity is too small, give a default direction
             Velocity = Vector3.forward * minSpeed;
         }
         
         // Update position
         transform.position += Velocity * deltaTime;
         
-        // Orient bird in flight direction
+        // Much more responsive turning for better flocking behavior
         if (Velocity.magnitude > 0.1f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(Velocity.normalized);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, deltaTime * 5.0f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, deltaTime * 12.0f);
         }
     }
     
     private void UpdateAnimation()
     {
-        // Simple flapping based on speed
+        // Simple flapping based on vertical velocity
         if (Velocity.y > 2.0f)
             isFlapping = true;
         else isFlapping = false;

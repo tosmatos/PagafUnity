@@ -10,7 +10,7 @@ public class FlockManager : MonoBehaviour
     
     [Header("Behavior")]
     [SerializeField] private float maxNeighborRadius = 15.0f;
-    public Vector3 GoalPosition { get; set; } = new Vector3(0, 10, 0);
+    public Vector3 GoalPosition;
     
     [Header("Goal Settings")]
     [SerializeField] private bool useMovingGoal = true;
@@ -23,6 +23,7 @@ public class FlockManager : MonoBehaviour
     
     void Start()
     {
+        GoalPosition = transform.position;
         SpawnFlock();
     }
     
@@ -39,7 +40,7 @@ public class FlockManager : MonoBehaviour
             goalAngle += goalMoveSpeed * Time.deltaTime;
             GoalPosition = new Vector3(
                 Mathf.Cos(goalAngle) * goalMoveRadius,
-                10f + Mathf.Sin(goalAngle * 0.5f) * 5f,
+                50f + Mathf.Sin(goalAngle * 0.5f) * 5f,
                 Mathf.Sin(goalAngle) * goalMoveRadius
             );
         }

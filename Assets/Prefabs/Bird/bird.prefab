@@ -266,19 +266,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe03457c7bc5a274495f0a9af058b105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  separationRadius: 3
-  alignmentRadius: 8
-  cohesionRadius: 15
+  separationRadius: 10
+  alignmentRadius: 20
+  cohesionRadius: 200
   maxSeparationForce: 50
   maxAlignmentForce: 30
   maxCohesionForce: 20
-  maxSpeed: 30
+  maxSpeed: 40
   minSpeed: 15
-  separationWeight: 3
+  separationWeight: 4
   alignmentWeight: 2
   cohesionWeight: 1.5
-  goalWeight: 0.5
-  avoidanceWeight: 3
+  goalWeight: 8
   isFlapping: 0
 --- !u!95 &8591665140300777352
 Animator:

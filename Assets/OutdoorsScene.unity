@@ -437,13 +437,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd0541b019a5f2940b168bb97a540e5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flockSize: 20
+  flockSize: 50
   birdPrefab: {fileID: 6579700535987405039, guid: 08493a308d5feb446ade1811c35aea4c, type: 3}
   spawnRadius: 5
-  maxNeighborRadius: 30
+  maxNeighborRadius: 200
+  GoalPosition: {x: 0, y: 0, z: 0}
   useMovingGoal: 1
-  goalMoveSpeed: 5
-  goalMoveRadius: 20
+  goalMoveSpeed: 1
+  goalMoveRadius: 50
 --- !u!4 &1300496858
 Transform:
   m_ObjectHideFlags: 0
@@ -453,7 +454,7 @@ Transform:
   m_GameObject: {fileID: 1300496856}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.83202, y: 0, z: 5.7597}
+  m_LocalPosition: {x: 0, y: 50, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
