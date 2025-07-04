@@ -228,6 +228,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2166173104625259129}
+  - component: {fileID: 1582697471585990799}
+  - component: {fileID: 8591665140300777352}
   m_Layer: 0
   m_Name: bird
   m_TagString: Untagged
@@ -244,14 +246,61 @@ Transform:
   m_GameObject: {fileID: 6579700535987405039}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.748012, y: 0, z: 5.7535367}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8453204030273238733}
   - {fileID: 7657929997243902027}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1582697471585990799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6579700535987405039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe03457c7bc5a274495f0a9af058b105, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  separationRadius: 5
+  alignmentRadius: 20
+  cohesionRadius: 200
+  maxSeparationForce: 50
+  maxAlignmentForce: 30
+  maxCohesionForce: 20
+  maxSpeed: 40
+  minSpeed: 15
+  separationWeight: 4
+  alignmentWeight: 2
+  cohesionWeight: 3
+  goalWeight: 8
+  isFlapping: 0
+--- !u!95 &8591665140300777352
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6579700535987405039}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 279cb9e12d85dfe4dad88dd6771a76e0, type: 2}
+  m_CullingMode: 2
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8342195778119734753
 GameObject:
   m_ObjectHideFlags: 0
