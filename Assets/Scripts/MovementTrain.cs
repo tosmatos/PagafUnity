@@ -1,21 +1,29 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
 
-public class TrainMovementSimple : MonoBehaviour
+public class TrainMovementRealistic : MonoBehaviour
 {
     [Header("Rail Settings")]
-    public Transform[] railPoints; // Points définissant la voie
+    public Transform[] railPoints;
     public float speed = 5f;
-    public bool loop = true; // Boucle infinie ou aller-retour
+    public bool loop = true;
     
-    private float currentPosition = 0f; // Position sur la courbe (0 à 1)
+    [Header("Curve Settings")]
+    [Range(0f, 90f)]
+    public float curveAngleThreshold = 15f; // Angle minimum pour déclencher une courbe
+    [Range(0f, 1f)]
+    public float curveStrength = 0.3f; // Intensité des courbes
+    public bool showDebugInfo = true;
+    
+    private float currentPosition = 0f;
     private int currentSegment = 0;
     private bool movingForward = true;
     private bool isMoving = false;
-    
-    // Input System
     private Keyboard keyboard;
+    
+    // Cache pour les types de segments
+    private enum SegmentType { Straight, Curve }
+    private SegmentType[] segmentTypes;
     
     void Start()
     {
@@ -25,11 +33,11 @@ public class TrainMovementSimple : MonoBehaviour
             return;
         }
         
-        // Initialiser le clavier
         keyboard = Keyboard.current;
-        
-        // Initialiser la position
         transform.position = railPoints[0].position;
+        
+        // Analyser les segments pour déterminer lesquels sont des courbes
+        AnalyzeSegments();
     }
     
     void Update()
@@ -60,6 +68,50 @@ public class TrainMovementSimple : MonoBehaviour
         {
             isMoving = false;
         }
+    }
+    
+    void AnalyzeSegments()
+    {
+        segmentTypes = new SegmentType[railPoints.Length - 1];
+        
+        for (int i = 0; i < railPoints.Length - 1; i++)
+        {
+            float angle = GetAngleAtPoint(i + 1);
+            
+            // Si l'angle est significatif, c'est une courbe
+            if (angle > curveAngleThreshold)
+            {
+                segmentTypes[i] = SegmentType.Curve;
+            }
+            else
+            {
+                segmentTypes[i] = SegmentType.Straight;
+            }
+            
+            if (showDebugInfo)
+            {
+                Debug.Log($"Segment {i}: {segmentTypes[i]} (angle: {angle:F1}°)");
+            }
+        }
+    }
+    
+    float GetAngleAtPoint(int pointIndex)
+    {
+        // Vérifier si on peut calculer l'angle (besoin de 3 points)
+        if (pointIndex <= 0 || pointIndex >= railPoints.Length - 1)
+            return 0f;
+            
+        Vector3 prevPoint = railPoints[pointIndex - 1].position;
+        Vector3 currentPoint = railPoints[pointIndex].position;
+        Vector3 nextPoint = railPoints[pointIndex + 1].position;
+        
+        Vector3 dir1 = (currentPoint - prevPoint).normalized;
+        Vector3 dir2 = (nextPoint - currentPoint).normalized;
+        
+        float angle = Vector3.Angle(dir1, dir2);
+        
+        // Retourner l'angle de déviation (180° = ligne droite, 0° = demi-tour)
+        return 180f - angle;
     }
     
     void MoveTrain()
@@ -110,65 +162,78 @@ public class TrainMovementSimple : MonoBehaviour
     
     void UpdateTrainPosition()
     {
-        Vector3 newPosition = GetPositionOnCurve(currentPosition);
-        Vector3 direction = GetDirectionOnCurve(currentPosition);
+        Vector3 newPosition = GetPositionOnTrack(currentPosition);
+        Vector3 direction = GetDirectionOnTrack(currentPosition);
         
-        // Positionner le train
         transform.position = newPosition;
         
-        // Orienter le train dans la direction du mouvement
         if (direction != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(direction);
         }
     }
     
-    Vector3 GetPositionOnCurve(float t)
+    Vector3 GetPositionOnTrack(float t)
     {
-        // Courbe de Bézier quadratique entre 3 points
-        if (railPoints.Length == 2)
+        if (currentSegment >= segmentTypes.Length)
+            return railPoints[railPoints.Length - 1].position;
+            
+        // Choisir le type d'interpolation selon le segment
+        if (segmentTypes[currentSegment] == SegmentType.Straight)
         {
-            return Vector3.Lerp(railPoints[currentSegment].position, 
-                               railPoints[currentSegment + 1].position, t);
+            return GetStraightPosition(t);
         }
+        else
+        {
+            return GetCurvePosition(t);
+        }
+    }
+    
+    Vector3 GetStraightPosition(float t)
+    {
+        // Interpolation linéaire simple
+        Vector3 startPos = railPoints[currentSegment].position;
+        Vector3 endPos = railPoints[currentSegment + 1].position;
         
-        // Pour plus de 2 points, utiliser une courbe lisse
+        return Vector3.Lerp(startPos, endPos, t);
+    }
+    
+    Vector3 GetCurvePosition(float t)
+    {
+        // Utiliser une courbe de Bézier pour les virages
         Vector3 p0 = railPoints[currentSegment].position;
-        Vector3 p1 = railPoints[currentSegment + 1].position;
+        Vector3 p3 = railPoints[currentSegment + 1].position;
         
-        // Points de contrôle pour la courbe
-        Vector3 controlPoint1 = p0;
-        Vector3 controlPoint2 = p1;
+        // Points de contrôle pour une courbe naturelle
+        Vector3 p1 = p0 + GetTangentAtPoint(currentSegment, true) * Vector3.Distance(p0, p3) * curveStrength;
+        Vector3 p2 = p3 - GetTangentAtPoint(currentSegment + 1, false) * Vector3.Distance(p0, p3) * curveStrength;
         
-        // Ajuster les points de contrôle pour une courbe plus naturelle
-        if (currentSegment > 0)
-        {
-            Vector3 prevDirection = (p0 - railPoints[currentSegment - 1].position).normalized;
-            controlPoint1 = p0 + prevDirection * Vector3.Distance(p0, p1) * 0.3f;
-        }
-        
-        if (currentSegment < railPoints.Length - 2)
-        {
-            Vector3 nextDirection = (railPoints[currentSegment + 2].position - p1).normalized;
-            controlPoint2 = p1 - nextDirection * Vector3.Distance(p0, p1) * 0.3f;
-        }
-        
-        return CalculateBezierCurve(p0, controlPoint1, controlPoint2, p1, t);
+        return CalculateBezierCubic(p0, p1, p2, p3, t);
     }
     
-    Vector3 GetDirectionOnCurve(float t)
+    Vector3 GetTangentAtPoint(int pointIndex, bool isOutgoing)
     {
-        float sampleDistance = 0.01f;
-        float t1 = Mathf.Clamp01(t - sampleDistance);
-        float t2 = Mathf.Clamp01(t + sampleDistance);
+        Vector3 tangent = Vector3.forward;
         
-        Vector3 pos1 = GetPositionOnCurve(t1);
-        Vector3 pos2 = GetPositionOnCurve(t2);
+        if (pointIndex > 0 && pointIndex < railPoints.Length - 1)
+        {
+            Vector3 prev = railPoints[pointIndex - 1].position;
+            Vector3 next = railPoints[pointIndex + 1].position;
+            tangent = (next - prev).normalized;
+        }
+        else if (pointIndex == 0 && railPoints.Length > 1)
+        {
+            tangent = (railPoints[1].position - railPoints[0].position).normalized;
+        }
+        else if (pointIndex == railPoints.Length - 1 && railPoints.Length > 1)
+        {
+            tangent = (railPoints[pointIndex].position - railPoints[pointIndex - 1].position).normalized;
+        }
         
-        return (pos2 - pos1).normalized;
+        return tangent;
     }
     
-    Vector3 CalculateBezierCurve(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    Vector3 CalculateBezierCubic(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
     {
         float u = 1f - t;
         float tt = t * t;
@@ -176,51 +241,82 @@ public class TrainMovementSimple : MonoBehaviour
         float uuu = uu * u;
         float ttt = tt * t;
         
-        Vector3 result = uuu * p0;
-        result += 3 * uu * t * p1;
-        result += 3 * u * tt * p2;
-        result += ttt * p3;
+        return uuu * p0 + 3 * uu * t * p1 + 3 * u * tt * p2 + ttt * p3;
+    }
+    
+    Vector3 GetDirectionOnTrack(float t)
+    {
+        float sampleDistance = 0.01f;
+        float t1 = Mathf.Clamp01(t - sampleDistance);
+        float t2 = Mathf.Clamp01(t + sampleDistance);
         
-        return result;
+        Vector3 pos1 = GetPositionOnTrack(t1);
+        Vector3 pos2 = GetPositionOnTrack(t2);
+        
+        return (pos2 - pos1).normalized;
     }
     
     float GetSegmentLength()
     {
         if (currentSegment >= railPoints.Length - 1) return 1f;
-        
         return Vector3.Distance(railPoints[currentSegment].position, 
                                railPoints[currentSegment + 1].position);
     }
     
-    // Visualisation dans l'éditeur
     void OnDrawGizmosSelected()
     {
         if (railPoints == null || railPoints.Length < 2) return;
         
-        Gizmos.color = Color.yellow;
+        // Analyser les segments si pas encore fait
+        if (segmentTypes == null || segmentTypes.Length != railPoints.Length - 1)
+        {
+            AnalyzeSegments();
+        }
         
-        // Dessiner les points de contrôle
+        // Points de contrôle
+        Gizmos.color = Color.yellow;
         for (int i = 0; i < railPoints.Length; i++)
         {
             if (railPoints[i] != null)
             {
                 Gizmos.DrawWireSphere(railPoints[i].position, 0.5f);
+                
+                // Afficher l'angle à chaque point
+                if (i > 0 && i < railPoints.Length - 1)
+                {
+                    float angle = GetAngleAtPoint(i);
+                    Vector3 labelPos = railPoints[i].position + Vector3.up * 1.5f;
+                    
+                    #if UNITY_EDITOR
+                    UnityEditor.Handles.Label(labelPos, $"{angle:F0}°");
+                    #endif
+                }
             }
         }
         
-        // Dessiner la courbe
-        Gizmos.color = Color.red;
+        // Dessiner les segments avec des couleurs différentes
         for (int i = 0; i < railPoints.Length - 1; i++)
         {
             if (railPoints[i] != null && railPoints[i + 1] != null)
             {
-                for (float t = 0; t < 1; t += 0.05f)
+                // Couleur selon le type de segment
+                if (segmentTypes != null && i < segmentTypes.Length)
+                {
+                    Gizmos.color = segmentTypes[i] == SegmentType.Straight ? Color.green : Color.red;
+                }
+                else
+                {
+                    Gizmos.color = Color.white;
+                }
+                
+                Vector3 lastPos = railPoints[i].position;
+                for (float t = 0.05f; t <= 1; t += 0.05f)
                 {
                     int oldSegment = currentSegment;
                     currentSegment = i;
-                    Vector3 pos1 = GetPositionOnCurve(t);
-                    Vector3 pos2 = GetPositionOnCurve(t + 0.05f);
-                    Gizmos.DrawLine(pos1, pos2);
+                    Vector3 newPos = GetPositionOnTrack(t);
+                    Gizmos.DrawLine(lastPos, newPos);
+                    lastPos = newPos;
                     currentSegment = oldSegment;
                 }
             }
