@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c151c226b72aa4dd69f8e1e7e2fb55f0, type: 3}
+  m_Name: road_deadend_east
+  m_EditorClassIdentifier: 
+  tileName: road_deadend_east
+  prefab: {fileID: 8647680778697268532, guid: 85ff6ac2088145945b047ad3bd796687, type: 3}
+  allowedUp:
+  - Commercial1
+  - Commercial2
+  - Commercial3
+  - Industrial1
+  - Industrial2
+  - Industrial3
+  - Residential1
+  - Residential2
+  - Residential3
+  allowedDown:
+  - Commercial1
+  - Commercial2
+  - Commercial3
+  - Industrial1
+  - Industrial2
+  - Industrial3
+  - Residential1
+  - Residential2
+  - Residential3
+  allowedLeft:
+  - Commercial1
+  - Commercial2
+  - Commercial3
+  - Industrial1
+  - Industrial2
+  - Industrial3
+  - Residential1
+  - Residential2
+  - Residential3
+  allowedRight:
+  - road_east_west
+  - road_cross
