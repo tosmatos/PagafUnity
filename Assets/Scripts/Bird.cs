@@ -19,7 +19,7 @@ public class Bird : MonoBehaviour
     [SerializeField] private float separationWeight = 4.0f;
     [SerializeField] private float alignmentWeight = 2.0f;
     [SerializeField] private float cohesionWeight = 3.0f;
-    [SerializeField] private float goalWeight = 8.0f;
+    [SerializeField] private float goalWeight = 6.0f;
     
     [Header("Animation")]
     [SerializeField] private bool isFlapping = false;
@@ -186,15 +186,15 @@ public class Bird : MonoBehaviour
         Velocity = Vector3.Lerp(Velocity, targetVelocity, deltaTime * 5.0f);
         
         // DEBUG: Print force magnitudes occasionally
-        if (Random.Range(0.0f, 1.0f) < 0.01f) // 1% of frames
-        {
-            Debug.Log($"Bird forces - Sep: {separationForce.magnitude:F2}, " +
-                     $"Align: {alignmentForce.magnitude:F2}, " +
-                     $"Cohesion: {cohesionForce.magnitude:F2}, " +
-                     $"Goal: {goalForce.magnitude:F2}, " +
-                     $"Total: {totalForce.magnitude:F2}, " +
-                     $"Speed: {Velocity.magnitude:F2}");
-        }
+        // if (Random.Range(0.0f, 1.0f) < 0.01f) // 1% of frames
+        // {
+        //     Debug.Log($"Bird forces - Sep: {separationForce.magnitude:F2}, " +
+        //              $"Align: {alignmentForce.magnitude:F2}, " +
+        //              $"Cohesion: {cohesionForce.magnitude:F2}, " +
+        //              $"Goal: {goalForce.magnitude:F2}, " +
+        //              $"Total: {totalForce.magnitude:F2}, " +
+        //              $"Speed: {Velocity.magnitude:F2}");
+        // }
         
         // Clamp speed to reasonable bird flight range
         float speed = Velocity.magnitude;
@@ -216,6 +216,17 @@ public class Bird : MonoBehaviour
         
         // Update position
         transform.position += Velocity * deltaTime;
+        
+        if (transform.position.y < 5.0f)
+        {
+            Vector3 pos = transform.position;
+            pos.y = 5.0f;
+            transform.position = pos;
+        
+            // Also kill downward velocity to prevent bouncing
+            if (Velocity.y < 0)
+                Velocity = new Vector3(Velocity.x, 0, Velocity.z);
+        }
         
         // Much more responsive turning for better flocking behavior
         if (Velocity.magnitude > 0.1f)
