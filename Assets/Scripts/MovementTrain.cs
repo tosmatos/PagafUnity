@@ -22,6 +22,7 @@ public class TrainMovementRealistic : MonoBehaviour
     private bool isMoving = false;
     private Keyboard keyboard;
     
+    
     // Cache pour les types de segments
     private enum SegmentType { Straight, Curve }
     private SegmentType[] segmentTypes;
@@ -54,20 +55,27 @@ public class TrainMovementRealistic : MonoBehaviour
     void HandleInput()
     {
         if (keyboard == null) return;
-        
-        if (keyboard.wKey.isPressed)
+        if (cameraHandler.isTrainCameraActive == false)
         {
             isMoving = true;
             movingForward = true;
         }
-        else if (keyboard.sKey.isPressed)
-        {
-            isMoving = true;
-            movingForward = false;
-        }
         else
         {
-            isMoving = false;
+            if (keyboard.wKey.isPressed)
+            {
+                isMoving = true;
+                movingForward = true;
+            }
+            else if (keyboard.sKey.isPressed)
+            {
+                isMoving = true;
+                movingForward = false;
+            }
+            else
+            {
+                isMoving = false;
+            }
         }
     }
     

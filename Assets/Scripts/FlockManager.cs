@@ -131,10 +131,10 @@ public class FlockManager : MonoBehaviour
         }
         
         // DEBUG: Occasionally log neighbor counts
-        if (Random.Range(0.0f, 1.0f) < 0.01f)
-        {
-            Debug.Log($"Neighbors found: {neighbors.Count}, Radius: {radius:F1}");
-        }
+        // if (Random.Range(0.0f, 1.0f) < 0.01f)
+        // {
+        //     Debug.Log($"Neighbors found: {neighbors.Count}, Radius: {radius:F1}");
+        // }
         
         return neighbors.ToArray();
     }
