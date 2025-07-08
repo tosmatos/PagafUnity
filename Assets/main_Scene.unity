@@ -425,9 +425,17 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1628927835143982787, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
+      propertyPath: speed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1628927835143982787, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
       propertyPath: cameraHandler
       value: 
       objectReference: {fileID: 1900306572}
+    - target: {fileID: 1628927835143982787, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
+      propertyPath: currentPosition
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1643722939740881200, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -40.429474
@@ -476,6 +484,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5103893592864219740, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
+      propertyPath: cameraHandler
+      value: 
+      objectReference: {fileID: 1900306572}
+    - target: {fileID: 5103893592864219740, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
+      propertyPath: currentPosition
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 5467929084415933516, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -483,6 +499,22 @@ PrefabInstance:
     - target: {fileID: 5866944590916777146, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6384405907079937951, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
+      propertyPath: cameraHandler
+      value: 
+      objectReference: {fileID: 1900306572}
+    - target: {fileID: 6384405907079937951, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
+      propertyPath: currentPosition
+      value: 0.33
+      objectReference: {fileID: 0}
+    - target: {fileID: 6595900791979303779, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
+      propertyPath: cameraHandler
+      value: 
+      objectReference: {fileID: 1900306572}
+    - target: {fileID: 6595900791979303779, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
+      propertyPath: currentPosition
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8542962256065700849, guid: ea1082253de8b454f9d607b7fb96963c, type: 3}
       propertyPath: m_Name

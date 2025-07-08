@@ -15,8 +15,8 @@ public class TrainMovementRealistic : MonoBehaviour
     public float curveStrength = 0.3f; // Intensité des courbes
     public bool showDebugInfo = true;
     public HandleCameras cameraHandler;
-    
-    private float currentPosition = 0f;
+
+    [SerializeField]private float currentPosition = 0f;
     private int currentSegment = 0;
     private bool movingForward = true;
     private bool isMoving = false;
