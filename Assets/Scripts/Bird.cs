@@ -186,15 +186,15 @@ public class Bird : MonoBehaviour
         Velocity = Vector3.Lerp(Velocity, targetVelocity, deltaTime * 5.0f);
         
         // DEBUG: Print force magnitudes occasionally
-        if (Random.Range(0.0f, 1.0f) < 0.01f) // 1% of frames
-        {
-            Debug.Log($"Bird forces - Sep: {separationForce.magnitude:F2}, " +
-                     $"Align: {alignmentForce.magnitude:F2}, " +
-                     $"Cohesion: {cohesionForce.magnitude:F2}, " +
-                     $"Goal: {goalForce.magnitude:F2}, " +
-                     $"Total: {totalForce.magnitude:F2}, " +
-                     $"Speed: {Velocity.magnitude:F2}");
-        }
+        // if (Random.Range(0.0f, 1.0f) < 0.01f) // 1% of frames
+        // {
+        //     Debug.Log($"Bird forces - Sep: {separationForce.magnitude:F2}, " +
+        //              $"Align: {alignmentForce.magnitude:F2}, " +
+        //              $"Cohesion: {cohesionForce.magnitude:F2}, " +
+        //              $"Goal: {goalForce.magnitude:F2}, " +
+        //              $"Total: {totalForce.magnitude:F2}, " +
+        //              $"Speed: {Velocity.magnitude:F2}");
+        // }
         
         // Clamp speed to reasonable bird flight range
         float speed = Velocity.magnitude;
